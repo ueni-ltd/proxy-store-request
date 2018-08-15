@@ -1,3 +1,4 @@
+import json as _json
 from urllib.parse import urlencode
 
 from requests import Session
@@ -9,10 +10,10 @@ class ProxyStoreClientException(Exception):
 
 class ProxyStoreSession(Session):
 
-    def __init__(self, server_url, server_token, user='Proxy-Client'):
+    def __init__(self, server_host, server_token, user='Proxy-Client'):
         super().__init__()
 
-        self.server_url = server_url
+        self.server_host = server_host
         self.server_headers = {
             'Authorization': f'Token {server_token}',
             'User-Agent': user
@@ -28,8 +29,10 @@ class ProxyStoreSession(Session):
 
         proxy_params = self.clean_dict(params)
         proxy_headers = self.clean_dict(headers)
+        data = data or {}
+        json = json or {}
+        data.update(json)
         proxy_data = self.clean_dict(data)
-        proxy_data.update(self.clean_dict(json))
 
         server_payload = dict(
             url=url,
@@ -37,13 +40,15 @@ class ProxyStoreSession(Session):
             headers=proxy_headers,
             data=proxy_data,
         )
+        
+        server_url = self.server_host + '/proxy/'
 
         if method == 'GET':
             params = urlencode(server_payload)
-            return super().request(method, self.server_url, params=params)
+            return super().request(method, server_url, params=params)
 
-        return super().request(method, self.server_url, json=server_payload)
+        return super().request(method, server_url, json=server_payload)
 
     def clean_dict(self, v):
-        return v or {}
+        return _json.dumps(v or {})
 
