@@ -45,9 +45,9 @@ class ProxyStoreSession(Session):
 
         if method == 'GET':
             params = urlencode(server_payload)
-            return super().request(method, server_url, params=params)
+            return super().request(method, server_url, headers=self.server_headers, params=params)
 
-        return super().request(method, server_url, json=server_payload)
+        return super().request(method, server_url, headers=self.server_headers, json=server_payload)
 
     def clean_dict(self, v):
         return _json.dumps(v or {})
