@@ -11,9 +11,9 @@ Configure Session
 from proxy_store_request import ProxyStoreSession
 
 proxy_request = ProxyStoreSession(
-                    server_url='http:localhost:9999',
-                    server_token='very secret'
-                )
+    server_url='http:localhost:9999',
+    server_token='very secret'
+)
 ```
 
 
